@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/Button';
 import Header from '@/components/Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/Dialog';
-import { Upload, Trash2 } from 'lucide-react';
+import { Upload, Trash2, Download } from 'lucide-react';
 
 // 安装包类型
 interface Package {
@@ -39,7 +39,7 @@ const PackagePage = () => {
   ]);
   
   // 存储空间统计
-  const storageUsed = 45;
+  const storageUsed = 45.2;
   const storageTotal = 100;
   const storagePercentage = (storageUsed / storageTotal) * 100;
 
@@ -161,6 +161,16 @@ const PackagePage = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => {
+                            showToast('✅ 下载已开始', 'success');
+                          }}
+                        >
+                          <Download size={16} className="mr-1" />
+                          下载
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
                             setSelectedPackage(pkg.id);
                             setIsHostListModalOpen(true);
                           }}
@@ -172,6 +182,7 @@ const PackagePage = () => {
                           size="sm" 
                           onClick={() => {
                             setPackages(prev => prev.filter(p => p.id !== pkg.id));
+                            showToast('✅ 安装包已删除', 'success');
                           }}
                         >
                           <Trash2 size={16} className="mr-1" />
