@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Home, Server, Database, Monitor, ChevronRight, ChevronDown, FileText, BarChart3, MapPin } from 'lucide-react';
+import { Home, Server, Database, Monitor, ChevronRight, ChevronDown, FileText, BarChart3, MapPin, Upload } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {

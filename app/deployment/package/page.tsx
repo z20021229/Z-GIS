@@ -33,7 +33,7 @@ const PackagePage = () => {
   
   // 模拟主机数据
   const [hosts, setHosts] = useState<Host[]>([
-    { id: '1', ip: '192.168.1.100', name: 'Host 1' },
+    { id: '1', ip: '10.168.207.94', name: '测试主机' },
     { id: '2', ip: '192.168.1.101', name: 'Host 2' },
     { id: '3', ip: '192.168.1.102', name: 'Host 3' }
   ]);
