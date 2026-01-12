@@ -75,7 +75,7 @@ const Sidebar = () => {
               />
             </div>
             <ul 
-              className={`ml-8 mt-1 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${expandedMenus.deployment ? 'max-h-40 opacity-100' : 'max-h-0 opacity-0'}`}
+              className={`ml-8 mt-1 space-y-1 overflow-hidden transition-all duration-300 ease-in-out ${expandedMenus.deployment ? 'max-h-60 opacity-100' : 'max-h-0 opacity-0'}`}
             >
               <li>
                 <a 
@@ -93,6 +93,15 @@ const Sidebar = () => {
                 >
                   <Database size={16} />
                   数据库驱动管理
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="/deployment/package" 
+                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/deployment/package') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
+                >
+                  <Upload size={16} />
+                  GIS版本包管理
                 </a>
               </li>
             </ul>

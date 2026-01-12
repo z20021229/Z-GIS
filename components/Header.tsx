@@ -13,6 +13,7 @@ const Header: React.FC = () => {
     '/deployment': '服务部署',
     '/deployment/host': '添加主机',
     '/deployment/driver': '数据库驱动管理',
+    '/deployment/package': 'GIS版本包管理',
     '/data': '数据管理',
     '/data/source': '数据源管理',
     '/data/layer': '图层管理',
