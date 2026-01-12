@@ -134,7 +134,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             <InputField
               label="主机IP"
               id="ip"
-              name="ip"
               required
               placeholder="输入主机IP"
               {...register('ip')}
@@ -150,7 +149,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             <InputField
               label="用户名"
               id="username"
-              name="username"
               required
               placeholder="输入用户名"
               {...register('username')}
@@ -166,7 +164,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             <PasswordField
               label="密码"
               id="password"
-              name="password"
               required
               placeholder="输入密码"
               {...register('password')}
@@ -225,7 +222,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             <InputField
               label="数据库用户名"
               id="dbUser"
-              name="dbUser"
               required
               placeholder="输入数据库用户名"
               {...register('dbUser')}
@@ -241,7 +237,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             <PasswordField
               label="数据库密码"
               id="dbPassword"
-              name="dbPassword"
               required
               placeholder="输入数据库密码"
               {...register('dbPassword')}
