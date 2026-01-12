@@ -16,11 +16,27 @@ interface Package {
   uploadTime: string;
 }
 
+// 主机类型
+interface Host {
+  id: string;
+  ip: string;
+  name: string;
+}
+
 const PackagePage = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [isHostListModalOpen, setIsHostListModalOpen] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  
+  // 模拟主机数据
+  const [hosts, setHosts] = useState<Host[]>([
+    { id: '1', ip: '192.168.1.100', name: 'Host 1' },
+    { id: '2', ip: '192.168.1.101', name: 'Host 2' },
+    { id: '3', ip: '192.168.1.102', name: 'Host 3' }
+  ]);
   
   // 存储空间统计
   const storageUsed = 45;
@@ -144,7 +160,19 @@ const PackagePage = () => {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          onClick={() => console.log('Delete package:', pkg.id)}
+                          onClick={() => {
+                            setSelectedPackage(pkg.id);
+                            setIsHostListModalOpen(true);
+                          }}
+                        >
+                          推送至主机
+                        </Button>
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            setPackages(prev => prev.filter(p => p.id !== pkg.id));
+                          }}
                         >
                           <Trash2 size={16} className="mr-1" />
                           删除
@@ -225,6 +253,53 @@ const PackagePage = () => {
               disabled={isUploading}
             >
               {isUploading ? '上传中...' : '开始上传'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Host List Modal */}
+      <Dialog open={isHostListModalOpen} onOpenChange={setIsHostListModalOpen}>
+        <DialogContent className="w-[600px] max-w-[90vw] bg-white rounded-lg shadow-xl">
+          <DialogHeader>
+            <DialogTitle>选择主机</DialogTitle>
+          </DialogHeader>
+          
+          <div className="p-4">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>主机名</TableHead>
+                  <TableHead>IP地址</TableHead>
+                  <TableHead className="text-right">操作</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {hosts.map((host) => (
+                  <TableRow key={host.id}>
+                    <TableCell>{host.name}</TableCell>
+                    <TableCell>{host.ip}</TableCell>
+                    <TableCell className="text-right">
+                      <Button 
+                        size="sm" 
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                        onClick={() => {
+                          setIsHostListModalOpen(false);
+                          showToast('✅ 安装包已推送至主机', 'success');
+                        }}
+                      >
+                        推送
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+          
+          <DialogFooter className="border-t p-4">
+            <Button variant="secondary" onClick={() => setIsHostListModalOpen(false)}>
+              取消
             </Button>
           </DialogFooter>
         </DialogContent>
