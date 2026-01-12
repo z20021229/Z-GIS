@@ -202,20 +202,21 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               <label htmlFor="dbDriver" className="col-span-3 text-right font-medium">
                 <span className="text-red-500 mr-1">*</span>选择数据库驱动
               </label>
-              <Select
-                value={formValues.dbDriver}
-                onValueChange={(value) => setValue('dbDriver', value as HostConfig['dbDriver'])}
-                className="col-span-9"
-              >
-                <SelectTrigger id="dbDriver" className="focus:ring-blue-500">
-                  <SelectValue placeholder="选择数据库驱动" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="GaussDB">GaussDB 505.2.1</SelectItem>
-                  <SelectItem value="PostgreSQL">PostgreSQL</SelectItem>
-                  <SelectItem value="MySQL">MySQL</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="col-span-9">
+                <Select
+                  value={formValues.dbDriver}
+                  onValueChange={(value) => setValue('dbDriver', value as HostConfig['dbDriver'])}
+                >
+                  <SelectTrigger id="dbDriver" className="focus:ring-blue-500">
+                    <SelectValue placeholder="选择数据库驱动" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="GaussDB">GaussDB 505.2.1</SelectItem>
+                    <SelectItem value="PostgreSQL">PostgreSQL</SelectItem>
+                    <SelectItem value="MySQL">MySQL</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             {/* 数据库用户名 */}
