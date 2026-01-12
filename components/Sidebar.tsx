@@ -1,23 +1,16 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Menu, X, Home, Server, Database, Monitor } from 'lucide-react';
+import { Home, Server, Database, Monitor } from 'lucide-react';
 
 const Sidebar = () => {
-  const [isExpanded, setIsExpanded] = useState(true);
   const [serviceDeploymentExpanded, setServiceDeploymentExpanded] = useState(false);
 
   return (
-    <aside className="fixed left-0 top-0 h-full bg-[#0f172a] text-white w-64 shadow-lg z-20">
+    <aside className="fixed left-0 top-0 h-full bg-[#001529] text-white w-[260px] shadow-lg z-20">
       {/* Logo */}
-      <div className="p-4 border-b border-gray-700 flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Z-GIS</h1>
-        <button 
-          onClick={() => setIsExpanded(!isExpanded)} 
-          className="p-1 rounded hover:bg-gray-700"
-        >
-          <X size={20} />
-        </button>
+      <div className="p-4 border-b border-gray-700">
+        <h1 className="text-2xl font-bold text-white">Z-GIS</h1>
       </div>
 
       {/* Navigation */}
@@ -54,11 +47,6 @@ const Sidebar = () => {
                 <li>
                   <a href="#" className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition-colors text-sm">
                     数据库驱动
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition-colors text-sm">
-                    GIS版本包管理
                   </a>
                 </li>
               </ul>
