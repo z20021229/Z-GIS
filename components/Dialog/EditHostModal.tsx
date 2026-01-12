@@ -168,7 +168,8 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               <button
                 type="button"
                 onClick={handleHostTest}
-                className="col-span-9 text-left text-sm text-blue-600 hover:text-blue-800"
+                className="col-span-9 text-left text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                disabled={hostTestStatus === 'testing'}
               >
                 {hostTestStatus === 'testing' ? (
                   <>
@@ -242,7 +243,8 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               <button
                 type="button"
                 onClick={handleDbTest}
-                className="col-span-9 text-left text-sm text-blue-600 hover:text-blue-800"
+                className="col-span-9 text-left text-sm text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                disabled={dbTestStatus === 'testing'}
               >
                 {dbTestStatus === 'testing' ? (
                   <>
