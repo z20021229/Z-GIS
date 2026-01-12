@@ -18,8 +18,8 @@ const Header: React.FC = () => {
     '/data/datasource': '数据源管理',
     '/data/layer': '图层管理',
     '/monitor': '监控管理',
-    '/monitor/dashboard': '监控面板',
-    '/monitor/alarm': '告警管理'
+    '/monitor/platform': '平台监控',
+    '/monitor/host': '主机监控'
   };
   
   // 生成面包屑数组

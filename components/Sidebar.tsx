@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Home, Server, Database, Monitor, ChevronRight, ChevronDown, FileText, BarChart3, MapPin, Upload } from 'lucide-react';
+import { Home, Server, Database, Monitor, ChevronRight, ChevronDown, FileText, BarChart3, MapPin, Upload, Activity, LineChart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {
@@ -162,20 +162,20 @@ const Sidebar = () => {
             >
               <li>
                 <a 
-                  href="/monitor/dashboard" 
-                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/monitor/dashboard') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
+                  href="/monitor/platform" 
+                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/monitor/platform') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
                 >
-                  <BarChart3 size={16} />
-                  监控面板
+                  <Activity size={16} />
+                  平台监控
                 </a>
               </li>
               <li>
                 <a 
-                  href="/monitor/alarm" 
-                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/monitor/alarm') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
+                  href="/monitor/host" 
+                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/monitor/host') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
                 >
-                  <FileText size={16} />
-                  告警管理
+                  <LineChart size={16} />
+                  主机监控
                 </a>
               </li>
             </ul>
