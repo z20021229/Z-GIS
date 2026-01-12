@@ -60,7 +60,7 @@ const HostPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <Header breadcrumbs={['服务部署', '添加主机']} />
+      <Header />
       
       {/* Main Content */}
       <div className="pt-20 pb-10 px-8">

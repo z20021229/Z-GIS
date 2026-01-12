@@ -15,7 +15,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <Header breadcrumbs={['主页']} />
+      <Header />
       
       {/* Main Content */}
       <div className="pt-20 pb-10 px-8">
