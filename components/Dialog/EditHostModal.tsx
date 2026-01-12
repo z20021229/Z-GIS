@@ -61,6 +61,17 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   // 监听表单值变化
   const formValues = watch();
 
+  // 监听IP输入变化，实现智能默认值填充
+  React.useEffect(() => {
+    // 使用正则匹配10.168.网段
+    if (/^10\.168\./.test(formValues.ip)) {
+      // 自动填入默认用户名'root'
+      setValue('username', 'root');
+      // 默认选中GaussDB 505.2.1
+      setValue('dbDriver', 'GaussDB');
+    }
+  }, [formValues.ip, setValue]);
+
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
@@ -70,11 +81,16 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setHostTestStatus('testing');
     
     try {
-      // 模拟1.5秒延迟
+      // 模拟1.5秒加载
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setHostTestStatus('success');
-      showToast('✅ 连接成功', 'success');
+      // 10.168网段显示特殊提示
+      if (/^10\.168\./.test(formValues.ip)) {
+        showToast('✅ 已通过公司内网 10.168.0.0/16 路由发现目标主机', 'success');
+      } else {
+        showToast('✅ 连接成功', 'success');
+      }
     } catch (error) {
       setHostTestStatus('idle');
       showToast('❌ 连接失败', 'error');
@@ -85,11 +101,16 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setDbTestStatus('testing');
     
     try {
-      // 模拟1.5秒延迟
+      // 模拟1.5秒加载
       await new Promise(resolve => setTimeout(resolve, 1500));
       
       setDbTestStatus('success');
-      showToast('✅ 连接成功', 'success');
+      // 10.168网段显示特殊提示
+      if (/^10\.168\./.test(formValues.ip)) {
+        showToast('✅ 已通过公司内网 10.168.0.0/16 路由发现目标数据库', 'success');
+      } else {
+        showToast('✅ 连接成功', 'success');
+      }
     } catch (error) {
       setDbTestStatus('idle');
       showToast('❌ 连接失败', 'error');

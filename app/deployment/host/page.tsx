@@ -26,6 +26,13 @@ const HostPage = () => {
     }
   ]);
 
+  // 生成随机10.168.x.x IP
+  const generateRandom10168IP = (): string => {
+    const thirdOctet = Math.floor(Math.random() * 256);
+    const fourthOctet = Math.floor(Math.random() * 256);
+    return `10.168.${thirdOctet}.${fourthOctet}`;
+  };
+
   const handleSave = (data: HostConfig) => {
     if (editingHost) {
       // 编辑现有主机
@@ -35,7 +42,23 @@ const HostPage = () => {
       setEditingHost(null);
     } else {
       // 添加新主机
-      setHosts(prev => [...prev, data]);
+      const updatedHosts = [...hosts, data];
+      
+      // 如果是10.168网段，随机生成2台同网段虚拟主机
+      if (data.ip.startsWith('10.168.')) {
+        for (let i = 0; i < 2; i++) {
+          updatedHosts.push({
+            ip: generateRandom10168IP(),
+            username: 'root',
+            password: 'password',
+            dbDriver: 'GaussDB',
+            dbUser: 'root',
+            dbPassword: 'password'
+          });
+        }
+      }
+      
+      setHosts(updatedHosts);
     }
     setIsModalOpen(false);
   };
@@ -110,7 +133,15 @@ const HostPage = () => {
                         />
                       </TableCell>
                       <TableCell>{host.username}@host</TableCell>
-                      <TableCell>{host.ip}</TableCell>
+                      <TableCell className="flex items-center">
+                        {host.ip}
+                        {/* 为10.168.网段的主机添加蓝色的'实验网段'标签 */}
+                        {host.ip.startsWith('10.168.') && (
+                          <span className="ml-2 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                            实验网段
+                          </span>
+                        )}
+                      </TableCell>
                       <TableCell>{host.username}</TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
