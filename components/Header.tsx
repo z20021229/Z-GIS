@@ -12,6 +12,7 @@ const Header: React.FC = () => {
     '/': '主页',
     '/deployment': '服务部署',
     '/deployment/host': '添加主机',
+    '/deployment/driver': '数据库驱动管理',
     '/data': '数据管理',
     '/data/source': '数据源管理',
     '/data/layer': '图层管理',

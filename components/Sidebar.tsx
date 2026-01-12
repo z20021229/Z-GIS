@@ -86,6 +86,15 @@ const Sidebar = () => {
                   添加主机
                 </a>
               </li>
+              <li>
+                <a 
+                  href="/deployment/driver" 
+                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/deployment/driver') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
+                >
+                  <Database size={16} />
+                  数据库驱动管理
+                </a>
+              </li>
             </ul>
           </li>
 
