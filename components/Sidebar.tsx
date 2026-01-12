@@ -125,8 +125,8 @@ const Sidebar = () => {
             >
               <li>
                 <a 
-                  href="/data/source" 
-                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/data/source') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
+                  href="/data/datasource" 
+                  className={`flex items-center gap-3 p-2 rounded transition-all duration-200 text-sm ${isActive('/data/datasource') ? 'bg-[#1890ff] text-white' : 'hover:bg-gray-700'}`}
                 >
                   <FileText size={16} />
                   数据源管理
