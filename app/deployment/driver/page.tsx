@@ -55,13 +55,16 @@ const DriverPage = () => {
   ]);
 
   // 处理默认驱动切换
-  const handleDefaultToggle = (driverId: string, type: Driver['type'], checked: boolean) => {
+  const handleDefaultToggle = (driverId: string, checked: boolean) => {
+    const driverToToggle = drivers.find(driver => driver.id === driverId);
+    if (!driverToToggle) return;
+    
     setDrivers(prevDrivers => 
       prevDrivers.map(driver => ({
         ...driver,
         isDefault: driver.id === driverId 
           ? checked 
-          : driver.type === type && driver.isDefault 
+          : driver.type === driverToToggle.type && driver.isDefault 
             ? false 
             : driver.isDefault
       }))
@@ -140,7 +143,7 @@ const DriverPage = () => {
                     <TableCell>
                       <Switch 
                         checked={driver.isDefault}
-                        onCheckedChange={(checked) => handleDefaultToggle(driver.id, driver.type, checked)}
+                        onCheckedChange={(checked) => handleDefaultToggle(driver.id, checked)}
                       />
                     </TableCell>
                     <TableCell>{driver.uploader}</TableCell>
