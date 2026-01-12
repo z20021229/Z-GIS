@@ -12,20 +12,19 @@ import { HostConfig } from '@/types';
 const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHost, setEditingHost] = useState<HostConfig | null>(null);
-  const [hosts, setHosts] = useState<HostConfig[]>([]);
   const [selectedHosts, setSelectedHosts] = useState<string[]>([]);
 
   // 模拟数据
-  // const [hosts, setHosts] = useState<HostConfig[]>([
-  //   {
-  //     ip: '192.168.1.100',
-  //     username: 'admin',
-  //     password: 'password123',
-  //     dbDriver: 'GaussDB',
-  //     dbUser: 'dbadmin',
-  //     dbPassword: 'dbpassword123'
-  //   }
-  // ]);
+  const [hosts, setHosts] = useState<HostConfig[]>([
+    {
+      ip: '192.168.1.100',
+      username: 'admin',
+      password: 'password123',
+      dbDriver: 'GaussDB',
+      dbUser: 'dbadmin',
+      dbPassword: 'dbpassword123'
+    }
+  ]);
 
   const handleSave = (data: HostConfig) => {
     if (editingHost) {

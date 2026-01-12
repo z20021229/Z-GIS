@@ -44,11 +44,6 @@ const Sidebar = () => {
                     添加主机
                   </a>
                 </li>
-                <li>
-                  <a href="#" className="flex items-center gap-3 p-2 rounded hover:bg-gray-700 transition-colors text-sm">
-                    数据库驱动
-                  </a>
-                </li>
               </ul>
             )}
           </li>

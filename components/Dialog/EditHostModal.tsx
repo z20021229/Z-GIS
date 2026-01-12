@@ -70,16 +70,11 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setHostTestStatus('testing');
     
     try {
-      const result = await testHostConnection(
-        formValues.ip,
-        formValues.username,
-        formValues.password
-      );
+      // 模拟1.5秒延迟
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      if (result.success) {
-        setHostTestStatus('success');
-        showToast('✅ 连接成功', 'success');
-      }
+      setHostTestStatus('success');
+      showToast('✅ 连接成功', 'success');
     } catch (error) {
       setHostTestStatus('idle');
       showToast('❌ 连接失败', 'error');
@@ -90,19 +85,11 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setDbTestStatus('testing');
     
     try {
-      const result = await testDatabaseConnection(
-        formValues.ip,
-        formValues.username,
-        formValues.password,
-        formValues.dbDriver,
-        formValues.dbUser,
-        formValues.dbPassword
-      );
+      // 模拟1.5秒延迟
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      if (result.success) {
-        setDbTestStatus('success');
-        showToast('✅ 连接成功', 'success');
-      }
+      setDbTestStatus('success');
+      showToast('✅ 连接成功', 'success');
     } catch (error) {
       setDbTestStatus('idle');
       showToast('❌ 连接失败', 'error');
