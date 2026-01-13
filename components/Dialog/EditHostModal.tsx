@@ -121,17 +121,35 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setDbTestStatus('testing');
     setDbTestText('正在验证...');
     
-    // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
-    // 注意：使用 trim() 去除可能存在的空格
-    setTimeout(() => {
-      if (watchedIp.trim().startsWith('10.168.') && watchedUsername.trim() === 'root') {
+    try {
+      // 调用真实的API接口测试数据库连接
+      const response = await fetch('/api/hosts/test-db', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ip: watchedIp,
+          username: watchedDbUser,
+          password: watchedDbPassword,
+          dbName: 'postgres', // 默认使用postgres数据库
+          port: 5432,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
         setDbTestStatus('success');
         showToast('测试数据库 正常', 'success');
       } else {
         setDbTestStatus('idle');
-        showToast('连接超时：非实验网段或认证失败', 'error');
+        showToast(`数据库连接失败: ${result.message}`, 'error');
       }
-    }, 1500);
+    } catch (error) {
+      setDbTestStatus('idle');
+      showToast('连接超时：API请求失败', 'error');
+    }
   };
 
   const onSubmit: SubmitHandler<HostConfigFormData> = (data) => {
@@ -259,9 +277,9 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
 
             {/* 数据库驱动 */}
             <div className="grid grid-cols-12 gap-4 items-center">
-              <label htmlFor="dbDriver" className="col-span-3 text-right font-medium">
+              <Label htmlFor="dbDriver" className="col-span-3 text-right font-medium">
                 <span className="text-red-500 mr-1">*</span>选择数据库驱动
-              </label>
+              </Label>
               <div className="col-span-9">
                 <Select
                   value={watchedDbDriver}
