@@ -26,11 +26,25 @@ const HostPage = () => {
     }
   ]);
 
-  // 生成随机10.168.x.x IP
-  const generateRandom10168IP = (): string => {
-    const thirdOctet = Math.floor(Math.random() * 256);
-    const fourthOctet = Math.floor(Math.random() * 256);
-    return `10.168.${thirdOctet}.${fourthOctet}`;
+  // 生成邻近的10.168.x.x IP
+  const generateAdjacentIPs = (baseIP: string): string[] => {
+    const ipParts = baseIP.split('.');
+    if (ipParts.length !== 4 || ipParts[0] !== '10' || ipParts[1] !== '168') {
+      return [];
+    }
+    
+    const fourthOctet = parseInt(ipParts[3], 10);
+    const adjacentIPs: string[] = [];
+    
+    // 生成+1和+2的邻近IP
+    for (let i = 1; i <= 2; i++) {
+      const newFourthOctet = fourthOctet + i;
+      if (newFourthOctet <= 255) {
+        adjacentIPs.push(`${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.${newFourthOctet}`);
+      }
+    }
+    
+    return adjacentIPs;
   };
 
   const handleSave = (data: HostConfig) => {
@@ -44,18 +58,20 @@ const HostPage = () => {
       // 添加新主机
       const updatedHosts = [...hosts, data];
       
-      // 如果是10.168网段，随机生成2台同网段虚拟主机
+      // 如果是10.168网段，生成2台邻近IP的虚拟主机
       if (data.ip.startsWith('10.168.')) {
-        for (let i = 0; i < 2; i++) {
+        const adjacentIPs = generateAdjacentIPs(data.ip);
+        
+        adjacentIPs.forEach(ip => {
           updatedHosts.push({
-            ip: generateRandom10168IP(),
+            ip,
             username: 'root',
             password: 'password',
             dbDriver: 'GaussDB',
             dbUser: 'root',
             dbPassword: 'password'
           });
-        }
+        });
       }
       
       setHosts(updatedHosts);
@@ -147,6 +163,12 @@ const HostPage = () => {
                         <div className="flex items-center gap-2">
                           <span className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></span>
                           <span className="text-sm text-green-600">正常</span>
+                          {/* 为自动生成的实验网段主机标注状态 */}
+                          {hosts.indexOf(host) > 0 && host.ip.startsWith('10.168.') && (
+                            <span className="ml-2 px-2 py-0.5 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
+                              实验网段自动发现
+                            </span>
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
