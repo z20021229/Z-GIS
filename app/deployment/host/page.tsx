@@ -13,6 +13,8 @@ const HostPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingHost, setEditingHost] = useState<HostConfig | null>(null);
   const [selectedHosts, setSelectedHosts] = useState<string[]>([]);
+  // 通知状态
+  const [notification, setNotification] = useState<string | null>(null);
 
   // 模拟数据
   const [hosts, setHosts] = useState<HostConfig[]>([
@@ -76,6 +78,14 @@ const HostPage = () => {
       
       setHosts(updatedHosts);
     }
+    
+    // 显示成功通知
+    setNotification(`主机 ${data.ip} 已成功注册至运维中心`);
+    // 5秒后自动关闭通知
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
+    
     setIsModalOpen(false);
   };
 
@@ -98,6 +108,13 @@ const HostPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* 成功通知 */}
+      {notification && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 bg-green-500 text-white rounded-lg shadow-lg animate-in fade-in-0 slide-in-from-top-5">
+          ✅ {notification}
+        </div>
+      )}
+      
       {/* Header */}
       <Header />
       

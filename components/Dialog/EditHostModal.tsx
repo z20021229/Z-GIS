@@ -77,43 +77,86 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setTimeout(() => setToast(null), 3000);
   };
 
+  // 主机测试状态文字
+  const [hostTestText, setHostTestText] = useState('测试中...');
+  // 数据库测试状态文字
+  const [dbTestText, setDbTestText] = useState('测试中...');
+
   const handleHostTest = async () => {
+    // 检查表单是否完整，如果不完整，触发校验
+    if (!formValues.ip || !formValues.username || !formValues.password) {
+      // 触发所有必填字段的校验
+      if (!formValues.ip) {
+        document.getElementById('ip')?.focus();
+      } else if (!formValues.username) {
+        document.getElementById('username')?.focus();
+      } else if (!formValues.password) {
+        document.getElementById('password')?.focus();
+      }
+      return;
+    }
+
     setHostTestStatus('testing');
     
     try {
-      // 模拟1.5秒加载
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // 动态更新测试状态文字
+      setHostTestText('正在握手...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setHostTestText('验证凭据...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setHostTestStatus('success');
-      // 10.168网段显示特殊提示
-      if (/^10\.168\./.test(formValues.ip)) {
-        showToast('✅ 已通过公司内网 10.168.0.0/16 路由发现目标主机', 'success');
-      } else {
+      // 网段匹配逻辑
+      if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
+        setHostTestStatus('success');
         showToast('✅ 连接成功', 'success');
+      } else {
+        setHostTestStatus('idle');
+        showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
       }
     } catch (error) {
       setHostTestStatus('idle');
-      showToast('❌ 连接失败', 'error');
+      showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
     }
   };
 
   const handleDbTest = async () => {
+    // 检查表单是否完整，如果不完整，触发校验
+    if (!formValues.ip || !formValues.username || !formValues.password || !formValues.dbUser || !formValues.dbPassword) {
+      // 触发所有必填字段的校验
+      if (!formValues.ip) {
+        document.getElementById('ip')?.focus();
+      } else if (!formValues.username) {
+        document.getElementById('username')?.focus();
+      } else if (!formValues.password) {
+        document.getElementById('password')?.focus();
+      } else if (!formValues.dbUser) {
+        document.getElementById('dbUser')?.focus();
+      } else if (!formValues.dbPassword) {
+        document.getElementById('dbPassword')?.focus();
+      }
+      return;
+    }
+
     setDbTestStatus('testing');
     
     try {
-      // 模拟1.5秒加载
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // 动态更新测试状态文字
+      setDbTestText('正在握手...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setDbTestText('验证凭据...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      setDbTestStatus('success');
-      // 10.168网段显示特殊提示
-      if (/^10\.168\./.test(formValues.ip)) {
-        showToast('✅ 已通过公司内网 10.168.0.0/16 路由发现目标数据库', 'success');
-      } else {
+      // 网段匹配逻辑
+      if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
+        setDbTestStatus('success');
         showToast('✅ 连接成功', 'success');
+      } else {
+        setDbTestStatus('idle');
+        showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
       }
     } catch (error) {
       setDbTestStatus('idle');
-      showToast('❌ 连接失败', 'error');
+      showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
     }
   };
 
@@ -194,7 +237,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               >
                 {hostTestStatus === 'testing' ? (
                   <>
-                    <Loader2 size={16} className="inline mr-1 animate-spin" /> 测试中...
+                    <Loader2 size={16} className="inline mr-1 animate-spin" /> {hostTestText}
                   </>
                 ) : hostTestStatus === 'success' ? (
                   <>
@@ -269,7 +312,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               >
                 {dbTestStatus === 'testing' ? (
                   <>
-                    <Loader2 size={16} className="inline mr-1 animate-spin" /> 测试中...
+                    <Loader2 size={16} className="inline mr-1 animate-spin" /> {dbTestText}
                   </>
                 ) : dbTestStatus === 'success' ? (
                   <>
