@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { Request, Response } from 'node:http';
 import { Pool } from 'pg';
 
-export async function POST(request: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { ip, username, password, dbName = 'postgres', port = 5432 } = await request.json();
+    // 解析请求体
+    const body = await new Response(req.body).json();
+    const { ip, username, password, dbName = 'zgis_db', port = 5432 } = body;
 
     // 创建连接池
     const pool = new Pool({
@@ -17,12 +19,19 @@ export async function POST(request: NextRequest) {
     });
 
     // 测试连接
-    await pool.connect();
+    const client = await pool.connect();
+    await client.query('SELECT 1'); // 执行简单查询测试连接
+    await client.release();
     await pool.end();
 
-    return NextResponse.json({
+    return new Response(JSON.stringify({
       success: true,
       message: '数据库连接成功'
+    }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   } catch (error) {
     console.error('数据库连接错误:', error);
@@ -32,11 +41,14 @@ export async function POST(request: NextRequest) {
       errorMessage = error.message;
     }
 
-    return NextResponse.json({
+    return new Response(JSON.stringify({
       success: false,
       message: errorMessage
-    }, {
-      status: 500
+    }), {
+      status: 500,
+      headers: {
+        'Content-Type': 'application/json'
+      }
     });
   }
 }
