@@ -6,8 +6,8 @@ import Header from '@/components/Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { InputField } from '@/components/ui/InputField';
-import { PasswordField } from '@/components/ui/PasswordField';
+import { InputField } from '@/components/ui/inputfield';
+import { PasswordField } from '@/components/ui/passwordfield';
 import { Check, Loader2 } from 'lucide-react';
 
 // 数据源类型
