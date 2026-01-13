@@ -43,7 +43,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     setValue,
     formState: { errors },
   } = useForm<HostConfigFormData>({
@@ -58,19 +58,17 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     },
   });
 
-  // 监听表单值变化
-  const formValues = watch();
-
   // 监听IP输入变化，实现智能默认值填充
   React.useEffect(() => {
+    const currentIp = getValues('ip');
     // 使用正则匹配10.168.网段
-    if (/^10\.168\./.test(formValues.ip)) {
+    if (/^10\.168\./.test(currentIp)) {
       // 自动填入默认用户名'root'
       setValue('username', 'root');
       // 默认选中GaussDB 505.2.1
       setValue('dbDriver', 'GaussDB');
     }
-  }, [formValues.ip, setValue]);
+  }, [getValues, setValue]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
@@ -83,8 +81,9 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const [dbTestText, setDbTestText] = useState('测试中...');
 
   const handleHostTest = async () => {
+    const values = getValues(); // 关键修复：直接向表单要数据
     // 前置空值判断
-    if (!formValues.ip || !formValues.username || !formValues.password) {
+    if (!values.ip || !values.username || !values.password) {
       showToast('请先完整填写主机连接凭据', 'error');
       return;
     }
@@ -97,7 +96,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 网段与账户双重锁定
-      if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
+      if (/^10\.168\./.test(values.ip) && values.username === 'root') {
         setHostTestStatus('success');
         // 成功时不弹出toast，只显示按钮状态
       } else {
@@ -111,8 +110,9 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   };
 
   const handleDbTest = async () => {
+    const values = getValues(); // 关键修复：直接向表单要数据
     // 前置空值判断
-    if (!formValues.ip || !formValues.username || !formValues.password || !formValues.dbUser || !formValues.dbPassword) {
+    if (!values.ip || !values.username || !values.password || !values.dbUser || !values.dbPassword) {
       showToast('请先完整填写连接凭据', 'error');
       return;
     }
@@ -125,7 +125,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       // 网段与账户双重锁定
-      if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
+      if (/^10\.168\./.test(values.ip) && values.username === 'root') {
         setDbTestStatus('success');
         // 成功时不弹出toast，只显示按钮状态
       } else {
@@ -234,7 +234,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               </label>
               <div className="col-span-9">
                 <Select
-                  value={formValues.dbDriver}
+                  value={getValues('dbDriver')}
                   onValueChange={(value) => setValue('dbDriver', value as HostConfig['dbDriver'])}
                 >
                   <SelectTrigger id="dbDriver" className="focus:ring-blue-500">
