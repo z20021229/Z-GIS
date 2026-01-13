@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import EditHostModal from '@/components/Dialog/EditHostModal';
 import Header from '@/components/Header';
@@ -16,17 +16,44 @@ const HostPage = () => {
   // 通知状态
   const [notification, setNotification] = useState<string | null>(null);
 
-  // 模拟数据
-  const [hosts, setHosts] = useState<HostConfig[]>([
-    {
-      ip: '192.168.1.100',
-      username: 'admin',
-      password: 'password123',
-      dbDriver: 'GaussDB',
-      dbUser: 'dbadmin',
-      dbPassword: 'dbpassword123'
+  // 从localStorage读取初始数据
+  const [hosts, setHosts] = useState<HostConfig[]>([]);
+
+  // 初始化加载数据
+  useEffect(() => {
+    const savedHosts = localStorage.getItem('z_gis_hosts');
+    if (savedHosts) {
+      try {
+        const parsedHosts = JSON.parse(savedHosts);
+        setHosts(parsedHosts);
+      } catch (error) {
+        console.error('Failed to parse saved hosts:', error);
+        // 如果解析失败，使用默认数据
+        setHosts([
+          {
+            ip: '192.168.1.100',
+            username: 'admin',
+            password: 'password123',
+            dbDriver: 'GaussDB',
+            dbUser: 'dbadmin',
+            dbPassword: 'dbpassword123'
+          }
+        ]);
+      }
+    } else {
+      // 如果没有保存的数据，使用默认数据
+      setHosts([
+        {
+          ip: '192.168.1.100',
+          username: 'admin',
+          password: 'password123',
+          dbDriver: 'GaussDB',
+          dbUser: 'dbadmin',
+          dbPassword: 'dbpassword123'
+        }
+      ]);
     }
-  ]);
+  }, []);
 
   // 生成邻近的10.168.x.x IP
   const generateAdjacentIPs = (baseIP: string): string[] => {
@@ -50,15 +77,17 @@ const HostPage = () => {
   };
 
   const handleSave = (data: HostConfig) => {
+    let updatedHosts: HostConfig[];
+    
     if (editingHost) {
       // 编辑现有主机
-      setHosts(prev => prev.map(host => 
+      updatedHosts = hosts.map(host => 
         host.ip === editingHost.ip ? data : host
-      ));
+      );
       setEditingHost(null);
     } else {
       // 添加新主机
-      const updatedHosts = [...hosts, data];
+      updatedHosts = [...hosts, data];
       
       // 如果是10.168网段，生成2台邻近IP的虚拟主机
       if (data.ip.startsWith('10.168.')) {
@@ -75,9 +104,12 @@ const HostPage = () => {
           });
         });
       }
-      
-      setHosts(updatedHosts);
     }
+    
+    // 更新状态
+    setHosts(updatedHosts);
+    // 保存到localStorage
+    localStorage.setItem('z_gis_hosts', JSON.stringify(updatedHosts));
     
     // 显示成功通知
     setNotification(`主机 ${data.ip} 已成功注册至运维中心`);
@@ -95,7 +127,10 @@ const HostPage = () => {
   };
 
   const handleDelete = (ip: string) => {
-    setHosts(prev => prev.filter(host => host.ip !== ip));
+    const updatedHosts = hosts.filter(host => host.ip !== ip);
+    setHosts(updatedHosts);
+    // 保存到localStorage
+    localStorage.setItem('z_gis_hosts', JSON.stringify(updatedHosts));
   };
 
   const handleSelect = (ip: string) => {
@@ -124,12 +159,25 @@ const HostPage = () => {
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-semibold text-gray-900">主机配置管理</h2>
-              <Button onClick={() => {
-                setEditingHost(null);
-                setIsModalOpen(true);
-              }}>
-                添加主机配置
-              </Button>
+              <div className="flex gap-2">
+                {/* 清空缓存按钮 */}
+                <Button 
+                  variant="secondary" 
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                  className="text-sm"
+                >
+                  清空缓存
+                </Button>
+                <Button onClick={() => {
+                  setEditingHost(null);
+                  setIsModalOpen(true);
+                }}>
+                  添加主机配置
+                </Button>
+              </div>
             </div>
             
             {/* 主机列表表格 */}
