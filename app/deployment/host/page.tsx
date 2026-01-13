@@ -55,27 +55,6 @@ const HostPage = () => {
     }
   }, []);
 
-  // 生成邻近的10.168.x.x IP
-  const generateAdjacentIPs = (baseIP: string): string[] => {
-    const ipParts = baseIP.split('.');
-    if (ipParts.length !== 4 || ipParts[0] !== '10' || ipParts[1] !== '168') {
-      return [];
-    }
-    
-    const fourthOctet = parseInt(ipParts[3], 10);
-    const adjacentIPs: string[] = [];
-    
-    // 生成+1和+2的邻近IP
-    for (let i = 1; i <= 2; i++) {
-      const newFourthOctet = fourthOctet + i;
-      if (newFourthOctet <= 255) {
-        adjacentIPs.push(`${ipParts[0]}.${ipParts[1]}.${ipParts[2]}.${newFourthOctet}`);
-      }
-    }
-    
-    return adjacentIPs;
-  };
-
   const handleSave = (data: HostConfig) => {
     let updatedHosts: HostConfig[];
     
@@ -86,24 +65,8 @@ const HostPage = () => {
       );
       setEditingHost(null);
     } else {
-      // 添加新主机
+      // 添加新主机，仅添加用户输入的主机，不自动生成其他主机
       updatedHosts = [...hosts, data];
-      
-      // 如果是10.168网段，生成2台邻近IP的虚拟主机
-      if (data.ip.startsWith('10.168.')) {
-        const adjacentIPs = generateAdjacentIPs(data.ip);
-        
-        adjacentIPs.forEach(ip => {
-          updatedHosts.push({
-            ip,
-            username: 'root',
-            password: 'password',
-            dbDriver: 'GaussDB',
-            dbUser: 'root',
-            dbPassword: 'password'
-          });
-        });
-      }
     }
     
     // 更新状态

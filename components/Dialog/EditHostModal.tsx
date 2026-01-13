@@ -65,17 +65,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const watchedDbUser = watch('dbUser');
   const watchedDbPassword = watch('dbPassword');
 
-  // 监听IP输入变化，实现智能默认值填充
-  React.useEffect(() => {
-    // 使用正则匹配10.168.网段
-    if (/^10\.168\./.test(watchedIp)) {
-      // 自动填入默认用户名'root'
-      setValue('username', 'root');
-      // 默认选中GaussDB 505.2.1
-      setValue('dbDriver', 'GaussDB');
-    }
-  }, [watchedIp, setValue]);
-
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
@@ -99,19 +88,33 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setHostTestText('正在验证...');
     
     try {
-      // 直接验证，不使用模拟延迟
-      // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
-      // 注意：使用 trim() 去除可能存在的空格
-      if (watchedIp.trim().startsWith('10.168.') && watchedUsername.trim() === 'root') {
+      // 调用真实的API接口测试数据库连接（这里复用测试数据库的API，因为主机测试和数据库测试都是基于网络连接）
+      const response = await fetch('/api/hosts/test-db', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ip: watchedIp,
+          username: watchedUsername,
+          password: watchedPassword,
+          dbName: 'postgres', // 默认使用postgres数据库
+          port: 5432,
+        }),
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
         setHostTestStatus('success');
         showToast('测试主机 正常', 'success');
       } else {
         setHostTestStatus('idle');
-        showToast('连接超时：非实验网段或认证失败', 'error');
+        showToast(`主机连接失败: ${result.message}`, 'error');
       }
     } catch (error) {
       setHostTestStatus('idle');
-      showToast('测试失败：发生未知错误', 'error');
+      showToast('连接超时：API请求失败', 'error');
     }
   };
 
