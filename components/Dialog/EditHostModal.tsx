@@ -84,13 +84,6 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
       return;
     }
 
-    // 检测本地环境
-    if (watchedIp === '127.0.0.1' || watchedIp === 'localhost') {
-      console.log('检测到本地环境，请确保使用本地运行的 npm run dev 进行测试，否则 Vercel 云端无法访问您的本地 Docker');
-      showToast('检测到本地环境，请使用本地运行的 npm run dev 进行测试，Vercel 云端无法访问您的本地 Docker', 'error');
-      return;
-    }
-
     setHostTestStatus('testing');
     setHostTestText('正在验证...');
     
@@ -127,15 +120,8 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
 
   const handleDbTest = async () => {
     // 直接使用实时监听的变量，不再调用 getValues()
-    if (!watchedIp || !watchedUsername || !watchedPassword || !watchedDbUser || !watchedDbPassword) {
+    if (!watchedIp || !watchedDbUser || !watchedDbPassword) {
       showToast('请先完整填写数据库连接凭据', 'error');
-      return;
-    }
-
-    // 检测本地环境
-    if (watchedIp === '127.0.0.1' || watchedIp === 'localhost') {
-      console.log('检测到本地环境，请确保使用本地运行的 npm run dev 进行测试，否则 Vercel 云端无法访问您的本地 Docker');
-      showToast('检测到本地环境，请使用本地运行的 npm run dev 进行测试，Vercel 云端无法访问您的本地 Docker', 'error');
       return;
     }
 
@@ -153,7 +139,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
           ip: watchedIp,
           username: watchedDbUser,
           password: watchedDbPassword,
-          dbName: 'postgres', // 默认使用postgres数据库
+          dbName: 'zgis_db', // 使用docker-compose中配置的数据库名
           port: 5432,
         }),
       });
@@ -162,7 +148,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
       
       if (result.success) {
         setDbTestStatus('success');
-        showToast('测试数据库 正常', 'success');
+        showToast('数据库连接成功', 'success');
       } else {
         setDbTestStatus('idle');
         showToast(`数据库连接失败: ${result.message}`, 'error');
