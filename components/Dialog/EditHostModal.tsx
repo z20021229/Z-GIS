@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import { Check, Loader2 } from 'lucide-react';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '../ui/Button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '../ui/Dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
-import { InputField } from '../ui/InputField';
-import { PasswordField } from '../ui/PasswordField';
+import { Label } from '../ui/Label';
+import { Input } from '../ui/Input';
 import { HostConfig } from '@/types';
 
 interface EditHostModalProps {
@@ -40,7 +40,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
 
   // 使用 react-hook-form 管理表单
   const {
-    register,
+    control,
     handleSubmit,
     watch,
     setValue,
@@ -87,6 +87,8 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const [dbTestText, setDbTestText] = useState('测试中...');
 
   const handleHostTest = async () => {
+    // 添加调试日志
+    console.log('当前表单数据:', watch());
     // 直接使用实时监听的变量，不再调用 getValues()
     if (!watchedIp || !watchedUsername || !watchedPassword) {
       showToast('请先完整填写主机连接凭据 (IP/用户/密码)', 'error');
@@ -154,13 +156,24 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
           
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 p-4">
             {/* 主机IP */}
-            <InputField
-              label="主机IP"
-              id="ip"
-              required
-              placeholder="输入主机IP"
-              {...register('ip')}
-            />
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <Label htmlFor="ip" className="col-span-3 text-right font-medium">
+                <span className="text-red-500 mr-1">*</span>主机IP
+              </Label>
+              <Controller
+                name="ip"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="ip"
+                    placeholder="10.168.x.x"
+                    className="col-span-9 focus:ring-blue-500"
+                  />
+                )}
+              />
+            </div>
             {errors.ip && (
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3"></div>
@@ -169,13 +182,24 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             )}
 
             {/* 用户名 */}
-            <InputField
-              label="用户名"
-              id="username"
-              required
-              placeholder="输入用户名"
-              {...register('username')}
-            />
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <Label htmlFor="username" className="col-span-3 text-right font-medium">
+                <span className="text-red-500 mr-1">*</span>用户名
+              </Label>
+              <Controller
+                name="username"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="username"
+                    placeholder="输入用户名"
+                    className="col-span-9 focus:ring-blue-500"
+                  />
+                )}
+              />
+            </div>
             {errors.username && (
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3"></div>
@@ -184,13 +208,25 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             )}
 
             {/* 密码 */}
-            <PasswordField
-              label="密码"
-              id="password"
-              required
-              placeholder="输入密码"
-              {...register('password')}
-            />
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <Label htmlFor="password" className="col-span-3 text-right font-medium">
+                <span className="text-red-500 mr-1">*</span>密码
+              </Label>
+              <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="password"
+                    placeholder="输入密码"
+                    type="password"
+                    className="col-span-9 focus:ring-blue-500"
+                  />
+                )}
+              />
+            </div>
             {errors.password && (
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3"></div>
@@ -244,13 +280,24 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             </div>
 
             {/* 数据库用户名 */}
-            <InputField
-              label="数据库用户名"
-              id="dbUser"
-              required
-              placeholder="输入数据库用户名"
-              {...register('dbUser')}
-            />
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <Label htmlFor="dbUser" className="col-span-3 text-right font-medium">
+                <span className="text-red-500 mr-1">*</span>数据库用户名
+              </Label>
+              <Controller
+                name="dbUser"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="dbUser"
+                    placeholder="输入数据库用户名"
+                    className="col-span-9 focus:ring-blue-500"
+                  />
+                )}
+              />
+            </div>
             {errors.dbUser && (
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3"></div>
@@ -259,13 +306,25 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
             )}
 
             {/* 数据库密码 */}
-            <PasswordField
-              label="数据库密码"
-              id="dbPassword"
-              required
-              placeholder="输入数据库密码"
-              {...register('dbPassword')}
-            />
+            <div className="grid grid-cols-12 gap-4 items-center">
+              <Label htmlFor="dbPassword" className="col-span-3 text-right font-medium">
+                <span className="text-red-500 mr-1">*</span>数据库密码
+              </Label>
+              <Controller
+                name="dbPassword"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <Input
+                    {...field}
+                    id="dbPassword"
+                    placeholder="输入数据库密码"
+                    type="password"
+                    className="col-span-9 focus:ring-blue-500"
+                  />
+                )}
+              />
+            </div>
             {errors.dbPassword && (
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-3"></div>
