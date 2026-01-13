@@ -83,80 +83,58 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const [dbTestText, setDbTestText] = useState('测试中...');
 
   const handleHostTest = async () => {
-    // 检查表单是否完整，如果不完整，触发校验
+    // 前置空值判断
     if (!formValues.ip || !formValues.username || !formValues.password) {
-      // 触发所有必填字段的校验
-      if (!formValues.ip) {
-        document.getElementById('ip')?.focus();
-      } else if (!formValues.username) {
-        document.getElementById('username')?.focus();
-      } else if (!formValues.password) {
-        document.getElementById('password')?.focus();
-      }
+      showToast('请先完整填写主机连接凭据', 'error');
       return;
     }
 
     setHostTestStatus('testing');
+    setHostTestText('正在验证...');
     
     try {
-      // 动态更新测试状态文字
-      setHostTestText('正在握手...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setHostTestText('验证凭据...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 模拟2秒加载
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // 网段匹配逻辑
+      // 网段与账户双重锁定
       if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
         setHostTestStatus('success');
-        showToast('✅ 连接成功', 'success');
+        // 成功时不弹出toast，只显示按钮状态
       } else {
         setHostTestStatus('idle');
-        showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
+        showToast('连接失败：认证凭据无效或网络不可达', 'error');
       }
     } catch (error) {
       setHostTestStatus('idle');
-      showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
+      showToast('连接失败：认证凭据无效或网络不可达', 'error');
     }
   };
 
   const handleDbTest = async () => {
-    // 检查表单是否完整，如果不完整，触发校验
+    // 前置空值判断
     if (!formValues.ip || !formValues.username || !formValues.password || !formValues.dbUser || !formValues.dbPassword) {
-      // 触发所有必填字段的校验
-      if (!formValues.ip) {
-        document.getElementById('ip')?.focus();
-      } else if (!formValues.username) {
-        document.getElementById('username')?.focus();
-      } else if (!formValues.password) {
-        document.getElementById('password')?.focus();
-      } else if (!formValues.dbUser) {
-        document.getElementById('dbUser')?.focus();
-      } else if (!formValues.dbPassword) {
-        document.getElementById('dbPassword')?.focus();
-      }
+      showToast('请先完整填写连接凭据', 'error');
       return;
     }
 
     setDbTestStatus('testing');
+    setDbTestText('正在验证...');
     
     try {
-      // 动态更新测试状态文字
-      setDbTestText('正在握手...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setDbTestText('验证凭据...');
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // 模拟2秒加载
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // 网段匹配逻辑
+      // 网段与账户双重锁定
       if (/^10\.168\./.test(formValues.ip) && formValues.username === 'root') {
         setDbTestStatus('success');
-        showToast('✅ 连接成功', 'success');
+        // 成功时不弹出toast，只显示按钮状态
       } else {
         setDbTestStatus('idle');
-        showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
+        showToast('连接失败：认证凭据无效或网络不可达', 'error');
       }
     } catch (error) {
       setDbTestStatus('idle');
-      showToast('❌ 网络不可达：请检查 VPN 连接', 'error');
+      showToast('连接失败：认证凭据无效或网络不可达', 'error');
     }
   };
 
