@@ -84,6 +84,13 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
       return;
     }
 
+    // 检测本地环境
+    if (watchedIp === '127.0.0.1' || watchedIp === 'localhost') {
+      console.log('检测到本地环境，请确保使用本地运行的 npm run dev 进行测试，否则 Vercel 云端无法访问您的本地 Docker');
+      showToast('检测到本地环境，请使用本地运行的 npm run dev 进行测试，Vercel 云端无法访问您的本地 Docker', 'error');
+      return;
+    }
+
     setHostTestStatus('testing');
     setHostTestText('正在验证...');
     
@@ -122,6 +129,13 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     // 直接使用实时监听的变量，不再调用 getValues()
     if (!watchedIp || !watchedUsername || !watchedPassword || !watchedDbUser || !watchedDbPassword) {
       showToast('请先完整填写数据库连接凭据', 'error');
+      return;
+    }
+
+    // 检测本地环境
+    if (watchedIp === '127.0.0.1' || watchedIp === 'localhost') {
+      console.log('检测到本地环境，请确保使用本地运行的 npm run dev 进行测试，否则 Vercel 云端无法访问您的本地 Docker');
+      showToast('检测到本地环境，请使用本地运行的 npm run dev 进行测试，Vercel 云端无法访问您的本地 Docker', 'error');
       return;
     }
 
