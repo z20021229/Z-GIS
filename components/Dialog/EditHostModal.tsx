@@ -98,9 +98,10 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     setHostTestStatus('testing');
     setHostTestText('正在验证...');
     
-    // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
-    // 注意：使用 trim() 去除可能存在的空格
-    setTimeout(() => {
+    try {
+      // 直接验证，不使用模拟延迟
+      // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
+      // 注意：使用 trim() 去除可能存在的空格
       if (watchedIp.trim().startsWith('10.168.') && watchedUsername.trim() === 'root') {
         setHostTestStatus('success');
         showToast('测试主机 正常', 'success');
@@ -108,7 +109,10 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
         setHostTestStatus('idle');
         showToast('连接超时：非实验网段或认证失败', 'error');
       }
-    }, 1500);
+    } catch (error) {
+      setHostTestStatus('idle');
+      showToast('测试失败：发生未知错误', 'error');
+    }
   };
 
   const handleDbTest = async () => {
