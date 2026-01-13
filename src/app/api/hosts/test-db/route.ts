@@ -1,19 +1,15 @@
-import { Request, Response } from 'node:http';
+import { NextRequest, NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    // 解析请求体
-    const body = await new Response(req.body).json();
-    const { ip, username, password, dbName = 'zgis_db', port = 5432 } = body;
-
-    // 创建连接池
+    // 直接连接到本地Docker数据库
     const pool = new Pool({
-      host: ip,
-      user: username,
-      password,
-      database: dbName,
-      port: Number(port),
+      host: '127.0.0.1',
+      user: 'root',
+      password: 'Dataknown!234',
+      database: 'zgis_db',
+      port: 5432,
       // 缩短连接超时时间，用于测试
       connectionTimeoutMillis: 5000,
     });
@@ -24,14 +20,9 @@ export async function POST(req: Request) {
     await client.release();
     await pool.end();
 
-    return new Response(JSON.stringify({
+    return NextResponse.json({
       success: true,
       message: '数据库连接成功'
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json'
-      }
     });
   } catch (error) {
     console.error('数据库连接错误:', error);
@@ -41,14 +32,11 @@ export async function POST(req: Request) {
       errorMessage = error.message;
     }
 
-    return new Response(JSON.stringify({
+    return NextResponse.json({
       success: false,
       message: errorMessage
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json'
-      }
+    }, {
+      status: 500
     });
   }
 }
