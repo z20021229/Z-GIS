@@ -11,7 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { InputField } from '../ui/InputField';
 import { PasswordField } from '../ui/PasswordField';
 import { HostConfig } from '@/types';
-import { testHostConnection, testDatabaseConnection } from '@/lib/api';
 
 interface EditHostModalProps {
   open: boolean;
@@ -43,7 +42,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const {
     register,
     handleSubmit,
-    getValues,
+    watch,
     setValue,
     formState: { errors },
   } = useForm<HostConfigFormData>({
@@ -58,17 +57,24 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
     },
   });
 
+  // 实时监听关键字段
+  const watchedIp = watch('ip');
+  const watchedUsername = watch('username');
+  const watchedPassword = watch('password');
+  const watchedDbDriver = watch('dbDriver');
+  const watchedDbUser = watch('dbUser');
+  const watchedDbPassword = watch('dbPassword');
+
   // 监听IP输入变化，实现智能默认值填充
   React.useEffect(() => {
-    const currentIp = getValues('ip');
     // 使用正则匹配10.168.网段
-    if (/^10\.168\./.test(currentIp)) {
+    if (/^10\.168\./.test(watchedIp)) {
       // 自动填入默认用户名'root'
       setValue('username', 'root');
       // 默认选中GaussDB 505.2.1
       setValue('dbDriver', 'GaussDB');
     }
-  }, [getValues, setValue]);
+  }, [watchedIp, setValue]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
@@ -81,61 +87,49 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
   const [dbTestText, setDbTestText] = useState('测试中...');
 
   const handleHostTest = async () => {
-    const values = getValues(); // 关键修复：直接向表单要数据
-    // 前置空值判断
-    if (!values.ip || !values.username || !values.password) {
-      showToast('请先完整填写主机连接凭据', 'error');
+    // 直接使用实时监听的变量，不再调用 getValues()
+    if (!watchedIp || !watchedUsername || !watchedPassword) {
+      showToast('请先完整填写主机连接凭据 (IP/用户/密码)', 'error');
       return;
     }
 
     setHostTestStatus('testing');
     setHostTestText('正在验证...');
     
-    try {
-      // 模拟2秒加载
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 网段与账户双重锁定
-      if (/^10\.168\./.test(values.ip) && values.username === 'root') {
+    // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
+    // 注意：使用 trim() 去除可能存在的空格
+    setTimeout(() => {
+      if (watchedIp.trim().startsWith('10.168.') && watchedUsername.trim() === 'root') {
         setHostTestStatus('success');
-        // 成功时不弹出toast，只显示按钮状态
+        showToast('测试主机 正常', 'success');
       } else {
         setHostTestStatus('idle');
-        showToast('连接失败：认证凭据无效或网络不可达', 'error');
+        showToast('连接超时：非实验网段或认证失败', 'error');
       }
-    } catch (error) {
-      setHostTestStatus('idle');
-      showToast('连接失败：认证凭据无效或网络不可达', 'error');
-    }
+    }, 1500);
   };
 
   const handleDbTest = async () => {
-    const values = getValues(); // 关键修复：直接向表单要数据
-    // 前置空值判断
-    if (!values.ip || !values.username || !values.password || !values.dbUser || !values.dbPassword) {
-      showToast('请先完整填写连接凭据', 'error');
+    // 直接使用实时监听的变量，不再调用 getValues()
+    if (!watchedIp || !watchedUsername || !watchedPassword || !watchedDbUser || !watchedDbPassword) {
+      showToast('请先完整填写数据库连接凭据', 'error');
       return;
     }
 
     setDbTestStatus('testing');
     setDbTestText('正在验证...');
     
-    try {
-      // 模拟2秒加载
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // 网段与账户双重锁定
-      if (/^10\.168\./.test(values.ip) && values.username === 'root') {
+    // 拟真逻辑：必须是 10.168 开头 且 用户名是 root
+    // 注意：使用 trim() 去除可能存在的空格
+    setTimeout(() => {
+      if (watchedIp.trim().startsWith('10.168.') && watchedUsername.trim() === 'root') {
         setDbTestStatus('success');
-        // 成功时不弹出toast，只显示按钮状态
+        showToast('测试数据库 正常', 'success');
       } else {
         setDbTestStatus('idle');
-        showToast('连接失败：认证凭据无效或网络不可达', 'error');
+        showToast('连接超时：非实验网段或认证失败', 'error');
       }
-    } catch (error) {
-      setDbTestStatus('idle');
-      showToast('连接失败：认证凭据无效或网络不可达', 'error');
-    }
+    }, 1500);
   };
 
   const onSubmit: SubmitHandler<HostConfigFormData> = (data) => {
@@ -234,7 +228,7 @@ const EditHostModal: React.FC<EditHostModalProps> = ({ open, onClose, onSave, in
               </label>
               <div className="col-span-9">
                 <Select
-                  value={getValues('dbDriver')}
+                  value={watchedDbDriver}
                   onValueChange={(value) => setValue('dbDriver', value as HostConfig['dbDriver'])}
                 >
                   <SelectTrigger id="dbDriver" className="focus:ring-blue-500">
